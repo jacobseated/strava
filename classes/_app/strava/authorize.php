@@ -10,6 +10,7 @@
 
 namespace new_dk\_app\strava;
 
+use Exception;
 use \new_dk\_app\abstract_app_base;
 
 use \new_dk\_containers\app_container;
@@ -18,13 +19,15 @@ use \new_dk\_containers\app_container;
 class authorize extends abstract_app_base
 {
 
-    private app_container $gc;
+    protected app_container $gc;
 
     public function main()
     {
         // If the /authorize url was requested (via button/link on /admin)
         if ($this->gc->requested_path() === '/authorize') {
             $this->authorize();
+        } elseif ($this->gc->requested_path() === '/deauthorize') {
+            $this->deauthorize();
         } else {
             $this->token_exchange();
         }
@@ -43,13 +46,45 @@ class authorize extends abstract_app_base
         exit();
     }
 
+    /**
+     * Deauthorize the app from a users Strava account
+     * @return void 
+     * @throws Exception 
+     */
+    public function deauthorize() {
+
+        $wp_user_id = '';
+
+        $result = $this->db->prepared_query(
+            'SELECT * FROM strava_auth WHERE wp_user_id = ?',
+            [$wp_user_id]
+        );
+
+        if (false === $result) {
+            respond(500, 'Unable to fetch auth tokens from the database at thise time.');
+        }
+
+        $this->res = $this->http->post('https://www.strava.com/oauth/deauthorize', ['access_token' => $result->access_token]);
+
+        // Make sure the API responeded properly, if not we show an error
+        if ($this->res->status_code() !== '200') {
+            respond(200, 'Strava responded with: ' . $this->res->status_code() . ' — something appears not to be working.');
+        }
+
+        respond(200, 'Successfully deauthorized.');
+
+    }
+
 
     /**
-     * Optain new token from strava
+     * Optain new token from Strava
      * @return void 
      */
     public function token_exchange()
     {
+        if (empty($_GET["code"])) {
+            respond(400, '400 Bad Request: Missing one or more required URL parameters.');
+        }
         $usr_code = $_GET["code"];
 
         $client_id = $this->gc->strava_id();
@@ -77,7 +112,7 @@ class authorize extends abstract_app_base
 
         // Make sure the API responeded properly, if not we show an error
         if ($this->res->status_code() !== '200') {
-            respond(200, $this->res->status_code() . ': Something is not working.');
+            respond(200, 'Strava responded with: ' . $this->res->status_code() . ' — something appears not to be working.');
         }
 
         $result = $this->db->prepared_query(

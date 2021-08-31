@@ -30,10 +30,8 @@ require_once 'classes/_app/abstract_app_base.php';
 require_once 'classes/_containers/abstract_global_container.php';
 require_once 'classes/_containers/app_container.php';
 
-// Other
-require_once 'classes/strava/strava_container.php';
-
 // Doorkeeper external dependencies
+// Note. We should rely on Wordpress build-in Database tools — these are only used for testing purposes doing development
 require_once '/var/www/beamtic/lib/class_traits/no_set.php';
 require_once '/var/www/beamtic/lib/db_client/dk_credentials.php';
 require_once '/var/www/beamtic/lib/db_client/db_client_interface.php';
@@ -60,11 +58,11 @@ $gc->strava_id($strava_client_id)->strava_secret($strava_client_secret);
 
 $routes = [
     (new route(['GET', 'POST']))->string('/authorize')->class_handler('strava/authorize'),
+    (new route(['GET', 'POST']))->string('/deauthorize')->class_handler('strava/authorize'),
     (new route(['GET', 'POST']))->string('/')->class_handler('strava/authorize'),
     (new route(['GET']))->string('/admin')->class_handler('strava/admin'),
     (new route(['GET', 'POST']))->string('/phpinfo')->function_handler('phpinfo')
 ];
-
 
 function hallo_world() {
   echo 'Hallo World!';
