@@ -61,19 +61,15 @@ $gc->strava_id($strava_client_id)->strava_secret($strava_client_secret);
 // dev_log::write($response->headers());exit();
 
 $routes = [
-    (new route(['GET', 'POST']))->string('/authorize')->class_handler('strava/authorize'),
-    (new route(['GET', 'POST']))->string('/deauthorize')->class_handler('strava/authorize'),
-    (new route(['GET', 'POST']))->string('/')->class_handler('strava/authorize'),
-    (new route(['GET']))->string('/admin')->class_handler('strava/admin'),
-    (new route(['GET', 'POST']))->string('/login')->class_handler('wordpress/users'),
-    (new route(['GET', 'POST']))->string('/logout')->class_handler('wordpress/users'),
-    (new route(['GET', 'POST']))->string('/phpinfo')->function_handler('phpinfo')
+    (new route(['GET']))->string('/authorize')->class_handler('strava/authorize'), // Obtains fresh tokens from Strava
+    (new route(['GET']))->string('/deauthorize')->class_handler('strava/authorize'), // Revokes the Tokens obtained from Strava on a users request
+    (new route(['GET', 'POST']))->string('/')->class_handler('strava/authorize'), // Talks to the Strava API if requested, but shows the Frontpage from Wordpress otherwhise
+    (new route(['GET']))->string('/admin')->class_handler('strava/admin'), // Shows a Strava-admin page for the logged in user
+    (new route(['GET', 'POST']))->string('/login')->class_handler('wordpress/users'), // Logs in to Wordpress
+    (new route(['GET']))->string('/logout')->class_handler('wordpress/users'), // Logs out of Wordpress
+    (new route(['GET']))->string('/wp-admin')->class_handler('wordpress/users'), // Goes to the Wordpress back-end if logged in
+    (new route(['GET']))->string('/phpinfo')->function_handler('phpinfo') // Shows a php info page for testing purposes - remove when not needed
 ];
-
-function hallo_world() {
-  echo 'Hallo World!';
-  exit();
-}
 
 $router = new router(BASE_PATH, $routes, $http, $dev_log, $db_client, $gc);
 

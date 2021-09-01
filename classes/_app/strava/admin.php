@@ -15,8 +15,6 @@ use \new_dk\_app\abstract_app_base;
 
 class admin extends abstract_app_base
 {
-
-
   public function main()
   {
     if (!is_user_logged_in()) {

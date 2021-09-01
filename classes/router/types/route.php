@@ -77,10 +77,10 @@ class route
 
     /**
      * Set or return the supported POST parameters
-     * @param string|null $post_parms 
+     * @param array|null $post_parms 
      * @return array|$this 
      */
-    public function post_parms(string $post_parms = null)
+    public function post_parms(array $post_parms = null)
     {
         if (null === $post_parms) {
             return $this->post_parms;
@@ -92,10 +92,10 @@ class route
 
     /**
      * Set or return the supported GET parameters
-     * @param string|null $get_parms 
+     * @param array|null $get_parms 
      * @return array|$this 
      */
-    public function get_parms(string $get_parms = null)
+    public function get_parms(array $get_parms = null)
     {
         if (null === $get_parms) {
             return $this->get_parms;
