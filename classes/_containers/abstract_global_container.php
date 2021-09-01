@@ -24,21 +24,34 @@ abstract class abstract_global_container
 {
     private $base_path;
     private $requested_path;
+    private $full_request_url;
+    private $base_url;
 
     private $db;
     private $http;
     private $dev_log;
 
 
-    public function __construct($base_path, mysqli_client $db, dk_http_client $http, dev_log $dev_log, )
+    public function __construct($base_path, mysqli_client $db, dk_http_client $http, dev_log $dev_log,)
     {
         $this->base_path = $base_path;
         $parsed_url = parse_url($_SERVER['REQUEST_URI']);
         $this->requested_path = $parsed_url['path'];
 
+        // Determine the full_request_url, useful for header redirects
+        if ((!empty($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] !== 'off')) {
+            $this->full_request_url .= 'https://';
+        } else {
+            $this->full_request_url .= 'http://';
+        }
+        $this->base_url = $this->full_request_url . $_SERVER['HTTP_HOST'] . '/';
+        $this->full_request_url .= $_SERVER['HTTP_HOST'] . '/' . $_SERVER['REQUEST_URI'];
+
         $this->db = $db;
         $this->http = $http;
         $this->dev_log = $dev_log;
+
+        $this->main();
     }
 
     /**
@@ -47,7 +60,7 @@ abstract class abstract_global_container
      */
     public function base_path()
     {
-            return $this->base_path;
+        return $this->base_path;
     }
 
     /**
@@ -63,21 +76,43 @@ abstract class abstract_global_container
      * Returns the database object
      * @return mysqli_client 
      */
-    public function db() {
+    public function db()
+    {
         return $this->db;
     }
     /**
      * Returns the HTTP client
      * @return dk_http_client 
      */
-    public function http() {
+    public function http()
+    {
         return $this->http;
     }
     /**
      * Returns the dev_log
      * @return dev_log 
      */
-    public function dev_log() {
+    public function dev_log()
+    {
         return $this->dev_log;
     }
+
+    /**
+     * Returns the full request-URL. E.g.: http://example.com/some-url
+     * @return string 
+     */
+    public function full_request_url() {
+        return $this->full_request_url;
+    }
+
+    /**
+     * Returns the base URL. E.g: http://example.com/
+     * @return string 
+     */
+    public function base_url() {
+        return $this->base_url;
+    }
+
+
+    abstract protected function main();
 }

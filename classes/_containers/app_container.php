@@ -25,6 +25,14 @@ class app_container extends abstract_global_container
     private $strava_secret;
     private $strava_id;
 
+    protected function main()
+    {
+        // Check for dependency
+        if (!$this->check_for_included_file('wp-load.php')) {
+            respond(500, 'Required <b>wp-load.php</b> file not included.');
+        }
+    }
+
 
     /**
      * Sets or returns the strava client id
@@ -62,5 +70,20 @@ class app_container extends abstract_global_container
             }
         }
         return $this->strava_secret;
+    }
+
+    /**
+     * Since this app depends on Global Wordpress features, we check if the relevant file was included
+     * @return bool 
+     */
+    private function check_for_included_file(string $file_name)
+    {
+        $list_of_fules_arr = get_included_files();
+        foreach ($list_of_fules_arr as $file_path) {
+            if (false !== strpos($file_path, $file_name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

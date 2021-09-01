@@ -1,1 +1,3 @@
 /.vscode/*
+/wordpress/*
+wp_test.php

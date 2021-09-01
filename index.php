@@ -16,6 +16,10 @@ error_reporting(E_ALL);
 // Define BASE_PATH for use with file-handling and includes
 define('BASE_PATH', rtrim(preg_replace('#[/\\\\]{1,}#', '/', __DIR__), '/') . '/');
 
+// Wordpress
+define('COOKIEPATH', '');
+define('SITECOOKIEPATH', '');
+require 'wordpress/wp-load.php';
 
 // New DK
 require_once '../.credentials/strava_credentials.php';
@@ -61,6 +65,8 @@ $routes = [
     (new route(['GET', 'POST']))->string('/deauthorize')->class_handler('strava/authorize'),
     (new route(['GET', 'POST']))->string('/')->class_handler('strava/authorize'),
     (new route(['GET']))->string('/admin')->class_handler('strava/admin'),
+    (new route(['GET', 'POST']))->string('/login')->class_handler('wordpress/users'),
+    (new route(['GET', 'POST']))->string('/logout')->class_handler('wordpress/users'),
     (new route(['GET', 'POST']))->string('/phpinfo')->function_handler('phpinfo')
 ];
 
