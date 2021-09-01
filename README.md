@@ -21,6 +21,15 @@ in order to best optimize for speed and SEO. But, since this may make it hard to
 
 The code uses its own database tables to store data obtained from Strava for increased flexibility.
 
+### Routing
+When creating a new route you got various options that you can configure. For example:
+* The **Reqoest Type** that a given endpoint should allow E.g. *POST*, *GET*, *PUT*, *DELETE*
+* Allowed **GET** and **POST** parameters (optional). Can be provided as an *array* in the *get_parms* and *post_parms* methods on a route object.
+
+This system is seperate from Wordpress and allows us to easily add new features as needed in a clean way that does not interfere with Wordpress. 
+
+#### URL Endpoints (routes)
+
 The following URL endpoints are implemented in **index.php**, and just needs an improved design:
 
 * **/authorize** — Obtains fresh *Access Tokens* from Strava's API
@@ -32,13 +41,6 @@ The following URL endpoints are implemented in **index.php**, and just needs an 
 
 Each of these URL endpoints are implemented by creating a new **route** object that either calls a global function or instantiates an *app* class from **classes/_app/some_app_name/**
 How to add new routes is self-explanatory if you are using a modern source code editor like *Visual Studio Code* with the *PHP Intelephense* Extension.
-
-### Routing
-When creating a new route you got various options that you can configure. For example:
-* The **Reqoest Type** that a given endpoint should allow E.g. *POST*, *GET*, *PUT*, *DELETE*
-* Allowed **GET** and **POST** parameters (optional). Can be provided as an *array* in the *get_parms* and *post_parms* methods on a route object.
-
-This system is seperate from Wordpress and allows us to easily add new features as needed in a clean way that does not interfere with Wordpress. 
 
 #### Apps (class handlers)
 Apps are basically objects that handle request for URL endpoints, which are configured by adding routes.
@@ -64,7 +66,7 @@ The abstract class is core to the system, while app_container is more Strava-spe
 ### Directory structure
 The project follows a basic directory structure:
 
-* **includes/** for things that should be globally available. Please avoid global functions. Rely on DI instead!
+* **includes/** — for things that should be globally available. Please avoid global functions. Rely on DI instead!
 * **classes/** — contains various classes used to handle different things. E.g. A *http client* for cummunicating with Strava, and a *dev_log* for debugging purposes.
 * **classes/_app/** — contains individual route handler classes.
 * **classes/_containers/** — global container passed on to each app via Dependency Injection (DI).
